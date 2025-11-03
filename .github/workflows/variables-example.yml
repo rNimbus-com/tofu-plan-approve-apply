@@ -20,7 +20,7 @@ jobs:
         uses: opentofu/setup-opentofu@v1
 
       - name: Plan and Apply
-        uses: jlroskens/tofu-plan-approve-apply@${{ github.head_ref }}
+        uses: jlroskens/tofu-plan-approve-apply@feature/init-var-args
         with:
           require-approval: true
           required-approvers: jlroskens
