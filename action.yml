@@ -99,7 +99,7 @@ runs:
 
     - name: ⌛ Wait for Issue Approval
       uses: trstringer/manual-approval@v1
-      if: ${{ inputs.require-approval && steps.plan.outputs.exitcode == 2 }}
+      if: ${{ inputs.require-approval == 'true' && steps.plan.outputs.exitcode == '2' }}
       with:
         secret: ${{ github.TOKEN }}
         approvers: ${{ steps.parse-inputs.outputs.required-approvers }}
