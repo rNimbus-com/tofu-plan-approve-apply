@@ -29,6 +29,11 @@ assert_inputs_are_valid() {
         fi
     fi
 
+    if [[ "${INIT_VARS_ENABLED^^}" != 'TRUE' ]] && [[ "${INIT_VARS_ENABLED^^}" != 'FALSE' ]]; then
+        echo "Invalid value \"${INIT_VARS_ENABLED}\" set for `init-vars-enabled`. Valid values are true or false."
+        exit 1
+    fi
+
     if [[ -n ${WORKING_DIRECTORY+x} ]]; then
         if [[ ! -d "$WORKING_DIRECTORY" ]]; then
             echo "Working Directory '$WORKING_DIRECTORY' not found. Input \`working-directory\` must be set to a valid directory."
@@ -78,6 +83,12 @@ assign_outputs() {
             _var_values+=("-var $_var_value")
         done <<< "$TF_VARS"
         output_value 'tfvars' "${_var_values[@]}"
+    fi
+
+    if [[ -z ${INIT_VARS_ENABLED+x} ]]; then
+        output_value 'init-vars-enabled' '.'
+    else
+        output_value 'init-vars-enabled' "$INIT_VARS_ENABLED"
     fi
 
     if [[ -z ${REQUIRE_APPROVAL+x} ]]; then

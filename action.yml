@@ -25,6 +25,10 @@ inputs:
         myvar02 3
       ```
     required: false
+  init-vars-enabled:
+    type: bool
+    description: When enabled, passes [var-files] and [vars] inputs as command line arguments to the tofu init step.
+    default: false
   require-approval:
     type: bool
     description: >
@@ -54,26 +58,35 @@ runs:
       env:
         TF_VAR_FILES: ${{ inputs.var-files }}
         TF_VARS: ${{ inputs.vars }}
+        INIT_VARS_ENABLED: ${{ inputs.init-vars-enabled }}
         REQUIRE_APPROVAL: ${{ inputs.require-approval }}
         APPROVERS: ${{ inputs.required-approvers }}
         WORKING_DIRECTORY: ${{ inputs.working-directory }}
       shell: bash
-      run: $GITHUB_ACTION_PATH/parse_inputs.sh
+      run: | 
+        $GITHUB_ACTION_PATH/print_step.sh 1
+        $GITHUB_ACTION_PATH/parse_inputs.sh
       
     - name: 🟨 Tofu Init
       id: init
       working-directory: ${{ steps.parse-inputs.outputs.working-directory }}
       shell: bash
+      env:
+        INIT_VARS_ENABLED: ${{ steps.parse-inputs.outputs.init-vars-enabled }}
       run: |
-        echo "🟨 Tofu Init"
-        tofu init -input=false
+        $GITHUB_ACTION_PATH/print_step.sh 2
+        if [[ $INIT_VARS_ENABLED ]]; then
+          tofu init -input=false ${{ steps.parse-inputs.outputs.tfvar-files }} ${{ steps.parse-inputs.outputs.tfvars }}
+        else
+          tofu init -input=false
+        fi
 
     - name: 🟨 Tofu Validate
       id: validate
       working-directory: ${{ steps.parse-inputs.outputs.working-directory }}
       shell: bash
-      run: | 
-        echo "🟨 Tofu Validate"
+      run: |
+        $GITHUB_ACTION_PATH/print_step.sh 3
         tofu validate -no-color
 
     - name: 🟨 Tofu Plan
@@ -81,7 +94,7 @@ runs:
       working-directory: ${{ steps.parse-inputs.outputs.working-directory }}
       shell: bash
       run: |
-        echo "🟨 Tofu Plan"
+        $GITHUB_ACTION_PATH/print_step.sh 4
         tofu plan -input=false -compact-warnings -no-color -detailed-exitcode ${{ steps.parse-inputs.outputs.tfvar-files }} ${{ steps.parse-inputs.outputs.tfvars }} -out .tofuplan
 
     - name: ⌛ Wait for Issue Approval
@@ -105,7 +118,7 @@ runs:
       working-directory: ${{ steps.parse-inputs.outputs.working-directory }}
       shell: bash
       run: |
-        echo "🟨 Tofu Apply"
+        $GITHUB_ACTION_PATH/print_step.sh 6
         tofu apply -compact-warnings -no-color .tofuplan
     
     - name: 🧾Job Summary
@@ -117,7 +130,7 @@ runs:
       if: always()
       shell: bash
       run: |
-        echo "🧾Job Summary"
+        $GITHUB_ACTION_PATH/print_step.sh 7
         echo "## Apply Result" >> $GITHUB_STEP_SUMMARY
         echo -e '```'"\n$APPLY_OUTPUT\n"'```' >> $GITHUB_STEP_SUMMARY
 

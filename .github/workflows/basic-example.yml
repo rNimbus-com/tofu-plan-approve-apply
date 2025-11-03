@@ -1,0 +1,28 @@
+name: Basic Example w/ Approval
+
+on:
+  push:
+    branches:
+      - main
+      - feature/init-var-args
+    
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+jobs:
+  plan-apply:
+    runs-on: ubuntu-slim
+    steps:
+      - uses: actions/checkout@v5
+      - name: Install OpenTofu
+        uses: opentofu/setup-opentofu@v1
+
+      - name: Plan and Apply
+        uses: jlroskens/tofu-plan-approve-apply
+        with:
+          require-approval: true
+          required-approvers: jlroskens
+          working-directory: examples/basic
+         
