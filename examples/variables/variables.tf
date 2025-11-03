@@ -1,5 +1,5 @@
-variable "state_file_name" {
-  description = "Name of the local state file"
+variable "state_file_path" {
+  description = "Path to the local state file"
   type        = string
 }
 
