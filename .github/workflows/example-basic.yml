@@ -13,6 +13,7 @@ permissions:
 jobs:
   plan-apply:
     runs-on: ubuntu-latest
+    name: Plan -> Apply
     steps:
       - uses: actions/checkout@v5
       - name: Install OpenTofu

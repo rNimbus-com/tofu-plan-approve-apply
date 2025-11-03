@@ -16,7 +16,7 @@ defaults:
       working-directory: examples/variables
 jobs:
   plan-apply:
-    name: Var Args + Plan -> Approve
+    name: Var Args + Plan -> Apply
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
