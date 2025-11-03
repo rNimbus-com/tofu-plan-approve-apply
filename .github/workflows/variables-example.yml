@@ -16,8 +16,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
+      
       - name: Install OpenTofu
         uses: opentofu/setup-opentofu@v1
+      
+      - name: Create .terraform Directory
+        shell: bash
+        run: mkdir -p .terraform
 
       - name: Plan and Apply
         uses: jlroskens/tofu-plan-approve-apply@feature/init-var-args
@@ -28,6 +33,7 @@ jobs:
           vars: |-
              state_file_path=.terraform/variables_example.tfstate
           init-vars-enabled: true
+      
       - name: Outputs
         shell: bash
         run: |
