@@ -42,4 +42,7 @@ jobs:
         run: |
           echo "Random Number: $(tofu output -raw ${{ steps.plan-apply.outputs.var-file-args }} ${{ steps.plan-apply.outputs.var-args }} random_value)"
           echo ".terraform directory contents:" 
-          ls -l .terraform
+          echo "## Job Outputs" >> $GITHUB_STEP_SUMMARY
+          echo "**Random Number:** $(tofu output -raw ${{ steps.plan-apply.outputs.var-file-args }} ${{ steps.plan-apply.outputs.var-args }} random_value)" >> $GITHUB_STEP_SUMMARY
+          echo "**.terraform directory contents:**"  >> $GITHUB_STEP_SUMMARY
+          echo -e "```\n$(ls -l .terraform)\n```"  >> $GITHUB_STEP_SUMMARY
