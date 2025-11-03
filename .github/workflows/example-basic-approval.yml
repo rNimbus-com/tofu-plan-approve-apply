@@ -12,6 +12,7 @@ permissions:
   issues: write
 jobs:
   plan-apply:
+    name: Plan -> Approve -> Apply
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
